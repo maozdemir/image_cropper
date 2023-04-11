@@ -1,5 +1,6 @@
 import cv2
 import os
+from tqdm import tqdm
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
@@ -21,16 +22,19 @@ if not os.path.exists(ignored_face_too_small_path):
     os.makedirs(ignored_face_too_small_path)
 if not os.path.exists(ignored_image_too_small_path):
     os.makedirs(ignored_image_too_small_path)
-    
-for filename in os.listdir(src_path):
+
+files = os.listdir(src_path)
+for filename in tqdm(files, desc="Processing images"):
     
     if(cv2.imread(src_path + filename).shape[0] < 512 or cv2.imread(src_path + filename).shape[1] < 512):
         cv2.imwrite(ignored_image_too_small_path + filename, cv2.imread(src_path + filename))
     else:
         cv2.imwrite(prepared_path + filename, cv2.imread(src_path + filename))
+
         
         
-for filename in os.listdir(prepared_path):
+files = os.listdir(prepared_path)
+for filename in tqdm(files, desc="Detecting faces"):
     
     if(cv2.imread(prepared_path + filename).shape[0] < 512 or cv2.imread(prepared_path + filename).shape[1] < 512):
         cv2.imwrite(ignored_image_too_small_path + filename, cv2.imread(prepared_path + filename))
